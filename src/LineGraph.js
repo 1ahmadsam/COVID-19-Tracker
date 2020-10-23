@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import numeral from 'numeral';
+
 const options = {
   legend: {
     display: false,
@@ -10,7 +11,7 @@ const options = {
       radius: 0,
     },
   },
-  mainAspectRatio: false,
+  maintainAspectRatio: false,
   tooltips: {
     mode: 'index',
     intersect: false,
@@ -45,41 +46,43 @@ const options = {
     ],
   },
 };
-const buildChartData = (data, casesType = 'cases') => {
-  const chartData = [];
-  let lastDataPoint;
 
+const buildChartData = (data, casesType) => {
+  let chartData = [];
+  let lastDataPoint;
   for (let date in data.cases) {
     if (lastDataPoint) {
-      const newDataPoint = {
+      let newDataPoint = {
         x: date,
         y: data[casesType][date] - lastDataPoint,
       };
       chartData.push(newDataPoint);
     }
-
     lastDataPoint = data[casesType][date];
   }
   return chartData;
 };
 
-const LineGraph = ({ casesType = 'cases' }) => {
+function LineGraph({ casesType }) {
   const [data, setData] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
       await fetch('https://disease.sh/v3/covid-19/historical/all?lastdays=120')
-        .then((res) => res.json())
+        .then((response) => {
+          return response.json();
+        })
         .then((data) => {
-          const chartData = buildChartData(data);
+          let chartData = buildChartData(data, casesType);
           setData(chartData);
         });
     };
+
     fetchData();
   }, [casesType]);
 
   return (
-    <div className='lineGraph'>
+    <div>
       {data?.length > 0 && (
         <Line
           data={{
@@ -96,6 +99,6 @@ const LineGraph = ({ casesType = 'cases' }) => {
       )}
     </div>
   );
-};
+}
 
 export default LineGraph;
