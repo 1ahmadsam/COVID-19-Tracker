@@ -15,7 +15,13 @@ import numeral from 'numeral';
 import Map from './Map';
 import 'leaflet/dist/leaflet.css';
 
+import { ThemeProvider } from 'styled-components';
+import { lightTheme, darkTheme } from './theme';
+import { GlobalStyles } from './global';
+
 const App = () => {
+  const [theme, setTheme] = useState('light');
+
   const [country, setInputCountry] = useState('worldwide');
   const [countryInfo, setCountryInfo] = useState({});
   const [countries, setCountries] = useState([]);
@@ -68,70 +74,83 @@ const App = () => {
         setMapZoom(4);
       });
   };
+  const toggleTheme = () => {
+    // if the theme is not light, then set it to dark
+    if (theme === 'light') {
+      setTheme('dark');
+      // otherwise, it should be light
+    } else {
+      setTheme('light');
+    }
+  };
 
   return (
-    <div className='app'>
-      <div className='app__left'>
-        <div className='app__header'>
-          <h1>COVID-19 Tracker</h1>
-          <FormControl className='app__dropdown'>
-            <Select
-              variant='outlined'
-              value={country}
-              onChange={onCountryChange}
-            >
-              <MenuItem value='worldwide'>Worldwide</MenuItem>
-              {countries.map((country) => (
-                <MenuItem key={country.name} value={country.value}>
-                  {country.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </div>
-        <div className='app__stats'>
-          <InfoBox
-            onClick={(e) => setCasesType('cases')}
-            title='Coronavirus Cases'
-            isRed
-            active={casesType === 'cases'}
-            cases={prettyPrintStat(countryInfo.todayCases)}
-            total={numeral(countryInfo.cases).format('0.0a')}
-          />
-          <InfoBox
-            onClick={(e) => setCasesType('recovered')}
-            title='Recovered'
-            active={casesType === 'recovered'}
-            cases={prettyPrintStat(countryInfo.todayRecovered)}
-            total={numeral(countryInfo.recovered).format('0.0a')}
-          />
-          <InfoBox
-            onClick={(e) => setCasesType('deaths')}
-            title='Deaths'
-            isRed
-            active={casesType === 'deaths'}
-            cases={prettyPrintStat(countryInfo.todayDeaths)}
-            total={numeral(countryInfo.deaths).format('0.0a')}
-          />
-        </div>
-        <Map
-          countries={mapCountries}
-          casesType={casesType}
-          center={mapCenter}
-          zoom={mapZoom}
-        />
-      </div>
-      <Card className='app__right'>
-        <CardContent>
-          <div className='app__information'>
-            <h3>Live Cases by Country</h3>
-            <Table countries={tableData} />
-            <h3>Worldwide new {casesType}</h3>
-            <LineGraph casesType={casesType} />
+    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+      <GlobalStyles />
+      <div className='app'>
+        <div className='app__left'>
+          <div className='app__header'>
+            <h1>COVID-19 Tracker</h1>
+            <button onClick={toggleTheme}>Toggle theme</button>
+            <FormControl className='app__dropdown'>
+              <Select
+                variant='outlined'
+                value={country}
+                onChange={onCountryChange}
+              >
+                <MenuItem value='worldwide'>Worldwide</MenuItem>
+                {countries.map((country) => (
+                  <MenuItem key={country.name} value={country.value}>
+                    {country.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+          <div className='app__stats'>
+            <InfoBox
+              onClick={(e) => setCasesType('cases')}
+              title='Coronavirus Cases'
+              isRed
+              active={casesType === 'cases'}
+              cases={prettyPrintStat(countryInfo.todayCases)}
+              total={numeral(countryInfo.cases).format('0.0a')}
+            />
+            <InfoBox
+              onClick={(e) => setCasesType('recovered')}
+              title='Recovered'
+              active={casesType === 'recovered'}
+              cases={prettyPrintStat(countryInfo.todayRecovered)}
+              total={numeral(countryInfo.recovered).format('0.0a')}
+            />
+            <InfoBox
+              onClick={(e) => setCasesType('deaths')}
+              title='Deaths'
+              isRed
+              active={casesType === 'deaths'}
+              cases={prettyPrintStat(countryInfo.todayDeaths)}
+              total={numeral(countryInfo.deaths).format('0.0a')}
+            />
+          </div>
+          <Map
+            countries={mapCountries}
+            casesType={casesType}
+            center={mapCenter}
+            zoom={mapZoom}
+          />
+        </div>
+        <Card className='app__right'>
+          <CardContent>
+            <div className='app__information'>
+              <h3>Live Cases by Country</h3>
+              <Table countries={tableData} />
+              <h3>Worldwide new {casesType}</h3>
+              <LineGraph casesType={casesType} />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </ThemeProvider>
   );
 };
 
