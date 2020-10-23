@@ -3,9 +3,9 @@ import './App.css';
 import {
   MenuItem,
   FormControl,
-  Select,
   Card,
   CardContent,
+  Select,
 } from '@material-ui/core';
 import InfoBox from './InfoBox';
 import LineGraph from './LineGraph';
@@ -14,13 +14,14 @@ import { sortData, prettyPrintStat } from './util';
 import numeral from 'numeral';
 import Map from './Map';
 import 'leaflet/dist/leaflet.css';
-
 import { ThemeProvider } from 'styled-components';
 import { lightTheme, darkTheme } from './theme';
 import { GlobalStyles } from './global';
+import { useDarkMode } from './useDarkMode';
+import Toggle from './Toggle';
 
 const App = () => {
-  const [theme, setTheme] = useState('light');
+  const [theme, toggleTheme, componentMounted] = useDarkMode();
 
   const [country, setInputCountry] = useState('worldwide');
   const [countryInfo, setCountryInfo] = useState({});
@@ -74,24 +75,25 @@ const App = () => {
         setMapZoom(4);
       });
   };
-  const toggleTheme = () => {
-    // if the theme is not light, then set it to dark
-    if (theme === 'light') {
-      setTheme('dark');
-      // otherwise, it should be light
-    } else {
-      setTheme('light');
-    }
-  };
+  const themeMode = theme === 'light' ? lightTheme : darkTheme;
+  if (!componentMounted) {
+    return <div />;
+  }
 
+  // const countryOptions = countries.map((country) => ({
+  //   key: country.name,
+  //   value: country.value,
+  //   text: country.name,
+  // }));
+  // console.log(countryOptions);
   return (
-    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+    <ThemeProvider theme={themeMode}>
       <GlobalStyles />
       <div className='app'>
         <div className='app__left'>
           <div className='app__header'>
             <h1>COVID-19 Tracker</h1>
-            <button onClick={toggleTheme}>Toggle theme</button>
+            <Toggle theme={theme} toggleTheme={toggleTheme} />
             <FormControl className='app__dropdown'>
               <Select
                 variant='outlined'
