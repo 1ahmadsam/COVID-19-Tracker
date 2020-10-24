@@ -8,10 +8,6 @@
   padding: 20px;
 }
 
-.app__dropdown {
-  background-color: white;
-}
-
 .app__header {
   display: flex;
   align-items: center;
@@ -23,7 +19,11 @@
   color: #fc3c3c;
   font-size: 2rem;
 }
-
+.app__headerRight {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .app__stats {
   display: flex;
   justify-content: space-between;

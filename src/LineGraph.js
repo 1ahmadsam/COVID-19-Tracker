@@ -1,50 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Line } from 'react-chartjs-2';
 import numeral from 'numeral';
+import { ThemeContext } from 'styled-components';
 
-const options = {
-  legend: {
-    display: false,
-  },
-  elements: {
-    point: {
-      radius: 0,
+const options = (theme) => {
+  return {
+    legend: {
+      display: false,
     },
-  },
-  maintainAspectRatio: false,
-  tooltips: {
-    mode: 'index',
-    intersect: false,
-    callbacks: {
-      label: function (tooltipItem, data) {
-        return numeral(tooltipItem.value).format('+0,0');
+    elements: {
+      point: {
+        radius: 0,
       },
     },
-  },
-  scales: {
-    xAxes: [
-      {
-        type: 'time',
-        time: {
-          format: 'MM/DD/YY',
-          tooltipFormat: 'll',
+    maintainAspectRatio: false,
+    tooltips: {
+      mode: 'index',
+      intersect: false,
+      callbacks: {
+        label: function (tooltipItem, data) {
+          return numeral(tooltipItem.value).format('+0,0');
         },
       },
-    ],
-    yAxes: [
-      {
-        gridLines: {
-          display: false,
-        },
-        ticks: {
-          // Include a dollar sign in the ticks
-          callback: function (value, index, values) {
-            return numeral(value).format('0a');
+    },
+    scales: {
+      xAxes: [
+        {
+          type: 'time',
+          time: {
+            format: 'MM/DD/YY',
+            tooltipFormat: 'll',
+          },
+          ticks: {
+            fontColor: `${theme?.text}`,
           },
         },
-      },
-    ],
-  },
+      ],
+      yAxes: [
+        {
+          gridLines: {
+            display: false,
+          },
+          ticks: {
+            // Include a dollar sign in the ticks
+            callback: function (value, index, values) {
+              return numeral(value).format('0a');
+            },
+            fontColor: `${theme?.text}`,
+          },
+        },
+      ],
+    },
+  };
 };
 
 const buildChartData = (data, casesType) => {
@@ -63,23 +70,33 @@ const buildChartData = (data, casesType) => {
   return chartData;
 };
 
-function LineGraph({ casesType }) {
+function LineGraph({ casesType, countryCode }) {
   const [data, setData] = useState({});
 
+  const themeContext = useContext(ThemeContext);
   useEffect(() => {
+    const url =
+      countryCode === 'worldwide'
+        ? 'https://disease.sh/v3/covid-19/historical/all?lastdays=120'
+        : `https://disease.sh/v3/covid-19/historical/${countryCode}?lastdays=120`;
     const fetchData = async () => {
-      await fetch('https://disease.sh/v3/covid-19/historical/all?lastdays=120')
+      await fetch(url)
         .then((response) => {
           return response.json();
         })
         .then((data) => {
-          let chartData = buildChartData(data, casesType);
+          let chartData;
+          if (countryCode === 'worldwide') {
+            chartData = buildChartData(data, casesType);
+          } else {
+            chartData = buildChartData(data?.timeline, casesType);
+          }
           setData(chartData);
         });
     };
 
     fetchData();
-  }, [casesType]);
+  }, [casesType, countryCode]);
 
   return (
     <div>
@@ -94,7 +111,7 @@ function LineGraph({ casesType }) {
               },
             ],
           }}
-          options={options}
+          options={options(themeContext)}
         />
       )}
     </div>

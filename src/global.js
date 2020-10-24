@@ -6,22 +6,6 @@ export const GlobalStyles = createGlobalStyle`
   *::before {
     box-sizing: border-box;
   }
-  button {
-    background: ${({ theme }) => theme.gradient};
-    border: 2px solid ${({ theme }) => theme.toggleBorder};
-    color: ${({ theme }) => theme.text};
-    border-radius: 30px;
-    cursor: pointer;
-    display: flex;
-    font-size: 0.5rem;
-    justify-content: space-between;
-    margin: 0 auto;
-    overflow: hidden;
-    padding: 0.5rem;
-    position: relative;
-    width: 6rem;
-    height: 4rem;
-  }
   body {
     background: ${({ theme }) => theme.body};
     color: ${({ theme }) => theme.text};
@@ -34,6 +18,15 @@ export const GlobalStyles = createGlobalStyle`
     
     background-color: ${({ theme }) => theme.bodyLight} !important;
     color: ${({ theme }) => theme.text} 
+  }
+  .slider {
+    background:${({ theme }) => theme.gradient};
+  }
+  .app__dropdown {
+    background-color: ${({ theme }) => theme.bodyLight} 
+  }
+  .MuiInputBase-root {
+    color: ${({ theme }) => theme.text} !important;
   }
   .MuiTypography-colorTextSecondary {
     color: ${({ theme }) => theme.text} !important;

@@ -71,7 +71,12 @@ const App = () => {
       .then((data) => {
         setInputCountry(countryCode);
         setCountryInfo(data);
-        setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
+        console.log('some data here', data);
+        if (countryCode === 'worldwide') {
+          setMapCenter({ lat: 34.80746, lng: -40.4796 });
+        } else {
+          setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
+        }
         setMapZoom(4);
       });
   };
@@ -93,21 +98,23 @@ const App = () => {
         <div className='app__left'>
           <div className='app__header'>
             <h1>COVID-19 Tracker</h1>
-            <Toggle theme={theme} toggleTheme={toggleTheme} />
-            <FormControl className='app__dropdown'>
-              <Select
-                variant='outlined'
-                value={country}
-                onChange={onCountryChange}
-              >
-                <MenuItem value='worldwide'>Worldwide</MenuItem>
-                {countries.map((country) => (
-                  <MenuItem key={country.name} value={country.value}>
-                    {country.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <div className='app__headerRight'>
+              <FormControl className='app__dropdown'>
+                <Select
+                  variant='outlined'
+                  value={country}
+                  onChange={onCountryChange}
+                >
+                  <MenuItem value='worldwide'>Worldwide</MenuItem>
+                  {countries.map((country) => (
+                    <MenuItem key={country.name} value={country.value}>
+                      {country.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Toggle theme={theme} toggleTheme={toggleTheme} />
+            </div>
           </div>
           <div className='app__stats'>
             <InfoBox
@@ -146,8 +153,10 @@ const App = () => {
             <div className='app__information'>
               <h3>Live Cases by Country</h3>
               <Table countries={tableData} />
-              <h3>Worldwide new {casesType}</h3>
-              <LineGraph casesType={casesType} />
+              <h3>
+                {countryInfo?.country || 'Worldwide'} new {casesType}
+              </h3>
+              <LineGraph casesType={casesType} countryCode={country} />
             </div>
           </CardContent>
         </Card>
