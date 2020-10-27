@@ -1,4 +1,10 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# COVID-19 TRACKER APP
+
+### COVID-19 APP build using ReactJS, Firebase Hosting, Material UI, Chart.js, Styled-Components, disease.sh API, OpenStreet Map API
+
+### LIVE DEMO: https://covid-19-tracker-4c42d.web.app/
+
+![Image of COVID-19 APP](img/covid_app.jpg)
 
 ## Available Scripts
 
