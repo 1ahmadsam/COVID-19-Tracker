@@ -71,7 +71,6 @@ const App = () => {
       .then((data) => {
         setInputCountry(countryCode);
         setCountryInfo(data);
-        console.log('some data here', data);
         if (countryCode === 'worldwide') {
           setMapCenter({ lat: 34.80746, lng: -40.4796 });
         } else {
@@ -153,7 +152,14 @@ const App = () => {
             <div className='app__information'>
               <h3>Live Cases by Country</h3>
               <Table countries={tableData} />
-              <h3>
+              <h3 className='app__informationHeader'>
+                {countryInfo?.countryInfo && (
+                  <img
+                    src={countryInfo?.countryInfo?.flag}
+                    alt=''
+                    className='app__flag'
+                  />
+                )}
                 {countryInfo?.country || 'Worldwide'} new {casesType}
               </h3>
               <LineGraph casesType={casesType} countryCode={country} />
